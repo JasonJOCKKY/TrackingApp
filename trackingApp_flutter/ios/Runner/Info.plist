@@ -41,5 +41,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Location Permission -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app reports your location for research purposes.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>You locsation is used to determine risk level around you.</string>
 </dict>
 </plist>
