@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:tracking_app/widgets/mapFAB.dart';
 import 'service/location_service.dart';
+import 'widgets/mapWidget.dart';
 
 void main() {
   runApp(MyApp());
@@ -61,23 +63,41 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(locationEnabled),
-            Text(locationString),
-          ],
+        body: Stack(
+          fit: StackFit.expand,
+          children: [MapWidget()],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MapFAB(
+                    icon: Icon(Icons.near_me),
+                    isMini: false,
+                  ),
+                ],
+              ),
+              Spacer(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MapFAB(
+                    icon: Icon(Icons.timeline),
+                    isMini: true,
+                  ),
+                  MapFAB(
+                    icon: Icon(Icons.visibility),
+                    isMini: false,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerDocked);
   }
 }
