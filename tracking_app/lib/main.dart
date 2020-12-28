@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'service/location_service.dart';
+import 'widgets/mapfab.dart';
 
 void main() {
   runApp(MyApp());
@@ -39,6 +40,30 @@ class _MyHomePageState extends State<MyHomePage> {
         "Latitude: ${newLocation.latitude}\nLongitude: ${newLocation.longitude}";
   }
 
+  // Functions for FABs
+  bool isMapCentered = false;
+  bool isGridVisible = false;
+  bool isTimelineShown = false;
+
+  onCenterToggle() {
+    setState(() {
+      isMapCentered = !isMapCentered;
+    });
+  }
+
+  onGridToggle() {
+    setState(() {
+      isGridVisible = !isGridVisible;
+    });
+  }
+
+  onTimelineTogger() {
+    setState(() {
+      isTimelineShown = !isTimelineShown;
+    });
+  }
+
+  // Override Methods
   @override
   void initState() {
     super.initState();
@@ -64,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      drawer: Drawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -73,11 +99,43 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              verticalDirection: VerticalDirection.up,
+              children: [
+                MapFab(
+                  onPressed: this.onCenterToggle,
+                  icon: Icons.near_me,
+                  isActive: this.isMapCentered,
+                ),
+              ],
+            ),
+            Column(
+              verticalDirection: VerticalDirection.up,
+              children: [
+                MapFab(
+                    onPressed: this.onGridToggle,
+                    icon: Icons.visibility,
+                    isActive: this.isGridVisible),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: MapFab(
+                    onPressed: this.onTimelineTogger,
+                    icon: Icons.timeline,
+                    isActive: this.isTimelineShown,
+                    mini: true,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
