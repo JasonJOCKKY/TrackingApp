@@ -1,4 +1,10 @@
 # Crowd Tracking App
 
-## Before You Start
-Please generate a file `/environment/maps.keys.json` and put both "android_key" and "ios_key" in it.
+## Include Google Maps API Keys
+Before you start, please do the following:
+
+### Android
+Generate the file `/android/maps.keys.properties` and add property `androidKey`.
+
+### iOS
+Generate the file `/ios/Runner/maps.keys.json` and add `iosKey`

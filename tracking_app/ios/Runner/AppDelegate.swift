@@ -20,7 +20,7 @@ import GoogleMaps
 }
 
 struct MapKeysData: Decodable {
-    var ios_mapKey: String
+    var iosKey: String
 }
 
 func LoadMapKeys() -> String? {
@@ -30,7 +30,7 @@ func LoadMapKeys() -> String? {
             let jsonDecoder = JSONDecoder()
             let dataFromJSON = try jsonDecoder.decode(MapKeysData.self, from: data)
             
-            return dataFromJSON.ios_mapKey;
+            return dataFromJSON.iosKey;
         } catch {
             print(error)
             return nil
