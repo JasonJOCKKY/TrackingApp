@@ -12,8 +12,8 @@ class SearchBar extends StatefulWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
-  bool _isTyping = false;
   String _currentValue = "";
+  FocusNode _focus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +21,12 @@ class _SearchBarState extends State<SearchBar> {
       children: [
         Flexible(
           child: TextField(
-            onTap: () => setState(() {
-              _isTyping = true;
-            }),
             onChanged: (str) => setState(() {}),
             onSubmitted: (str) => setState(() {
-              _isTyping = false;
               _currentValue = str;
-              final FocusScopeNode currentScope = FocusScope.of(context);
-              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                FocusManager.instance.primaryFocus.unfocus();
-              }
               widget.onSearch(str);
             }),
+            focusNode: _focus,
             controller: widget.textController,
             textInputAction: TextInputAction.search,
             autocorrect: false,
@@ -61,7 +54,7 @@ class _SearchBarState extends State<SearchBar> {
           ),
         ),
         Visibility(
-            visible: _isTyping,
+            visible: _focus.hasFocus,
             child: Padding(
               padding: const EdgeInsets.only(
                 left: 10,
@@ -74,11 +67,9 @@ class _SearchBarState extends State<SearchBar> {
                   ),
                 ),
                 onTap: () {
-                  final FocusScopeNode currentScope = FocusScope.of(context);
-                  if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                    FocusManager.instance.primaryFocus.unfocus();
+                  if (_focus.hasFocus) {
+                    _focus.unfocus();
                   }
-                  _isTyping = false;
                   widget.textController.text = _currentValue;
                 },
               ),
@@ -86,11 +77,4 @@ class _SearchBarState extends State<SearchBar> {
       ],
     );
   }
-
-  // Helper Method
-  // void _cancel(context) {
-  //   FocusScope.of(context).unfocus();
-  //   _isTyping = false;
-  //   widget.textController.text = _currentValue;
-  // }
 }

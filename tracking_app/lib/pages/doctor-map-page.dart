@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tracking_app/pages/patient-menu-page.dart';
+import 'package:tracking_app/widgets/interactive-map.dart';
 import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/searchbar.dart';
 import 'package:tracking_app/widgets/topbar.dart';
@@ -103,16 +104,7 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   Widget _background() {
     return Stack(
       children: [
-        Container(
-          alignment: Alignment.center,
-          color: Colors.amber,
-          child: Image(
-            image: AssetImage('assets/map.png'),
-            fit: BoxFit.fitHeight,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-        ),
+        InteractiveMap(),
         // FABs
         _fabs(),
         // TopBar
