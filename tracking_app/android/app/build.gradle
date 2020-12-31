@@ -21,6 +21,16 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// For Map Keys
+def mapKeysProperties = new Properties()
+def mapKeysPropertiesFile = rootProject.file('map.keys.properties')
+if (mapKeysPropertiesFile.exists()) {
+    mapKeysPropertiesFile.withReader('UTF-8') { reader ->
+        mapKeysProperties.load(reader)
+    }
+}
+
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -38,11 +48,13 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.tracking_app"
+        applicationId "com.research.trackingApp"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders = [mapKey:mapKeysProperties.getProperty('androidKey')]
     }
 
     buildTypes {
