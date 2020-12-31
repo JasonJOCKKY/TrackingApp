@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:tracking_app/pages/patient_menu_page.dart';
-import 'package:tracking_app/widgets/mapfab.dart';
+import 'package:tracking_app/pages/patient-menu-page.dart';
+import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/searchbar.dart';
 import 'package:tracking_app/widgets/topbar.dart';
 

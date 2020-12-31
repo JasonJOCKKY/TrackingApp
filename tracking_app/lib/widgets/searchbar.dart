@@ -27,13 +27,17 @@ class _SearchBarState extends State<SearchBar> {
             onChanged: (str) => setState(() {}),
             onSubmitted: (str) => setState(() {
               _isTyping = false;
-              FocusScope.of(context).unfocus();
               _currentValue = str;
+              final FocusScopeNode currentScope = FocusScope.of(context);
+              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                FocusManager.instance.primaryFocus.unfocus();
+              }
               widget.onSearch(str);
             }),
             controller: widget.textController,
             textInputAction: TextInputAction.search,
             autocorrect: false,
+            autofocus: false,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.zero,
               fillColor: Colors.grey[100],
@@ -70,7 +74,12 @@ class _SearchBarState extends State<SearchBar> {
                   ),
                 ),
                 onTap: () {
-                  _cancel();
+                  final FocusScopeNode currentScope = FocusScope.of(context);
+                  if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                    FocusManager.instance.primaryFocus.unfocus();
+                  }
+                  _isTyping = false;
+                  widget.textController.text = _currentValue;
                 },
               ),
             )),
@@ -79,9 +88,9 @@ class _SearchBarState extends State<SearchBar> {
   }
 
   // Helper Method
-  void _cancel() {
-    FocusScope.of(context).unfocus();
-    _isTyping = false;
-    widget.textController.text = _currentValue;
-  }
+  // void _cancel(context) {
+  //   FocusScope.of(context).unfocus();
+  //   _isTyping = false;
+  //   widget.textController.text = _currentValue;
+  // }
 }

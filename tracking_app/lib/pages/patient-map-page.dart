@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tracking_app/pages/patient_menu_page.dart';
-import 'package:tracking_app/widgets/mapfab.dart';
+import 'package:tracking_app/pages/patient-menu-page.dart';
+import 'package:tracking_app/widgets/interactive-map.dart';
+import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/topbar.dart';
 
 class PatientMapPage extends StatefulWidget {
@@ -44,16 +45,7 @@ class _PatientMapPageState extends State<PatientMapPage> {
       body: Stack(
         children: [
           // Background
-          Container(
-            alignment: Alignment.center,
-            color: Colors.amber,
-            child: Image(
-              image: AssetImage('assets/map.png'),
-              fit: BoxFit.fitHeight,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-          ),
+          InteractiveMap(),
           // FABs
           _fabs(),
           // Top Bar
