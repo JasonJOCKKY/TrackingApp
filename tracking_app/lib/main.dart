@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app/pages/doctor_map_page.dart';
-import 'package:tracking_app/pages/patient_map_page.dart';
 
 void main() {
   runApp(MyApp());

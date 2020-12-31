@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tracking_app/pages/patient_menu_page.dart';
 import 'package:tracking_app/widgets/mapfab.dart';
+import 'package:tracking_app/widgets/searchbar.dart';
 import 'package:tracking_app/widgets/topbar.dart';
 
 class DoctorMapPage extends StatefulWidget {
@@ -13,6 +14,15 @@ class DoctorMapPage extends StatefulWidget {
 
 class _DoctorMapPageState extends State<DoctorMapPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Functions for Panel
+  final double _defaultPanelHeight = 100;
+  double _minPanelHeight;
+  double _maxPanelHeight;
+
+  // Functions for search bar
+  bool isTyping = false;
+  final TextEditingController searchBarController = TextEditingController();
 
   // Functions for FABs
   bool isGridVisible = false;
@@ -24,6 +34,17 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   }
 
   // Override Methods
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchBarController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,13 +58,14 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   // Widget builder functions
   Widget _panel(context) {
     MediaQueryData _mq = MediaQuery.of(context);
-    double _panelWidth = _mq.size.width;
+
+    _minPanelHeight = _defaultPanelHeight + _mq.padding.bottom;
+    _maxPanelHeight = _mq.size.height - _mq.padding.top - _mq.viewInsets.bottom;
 
     return SlidingUpPanel(
-      // minHeight: _minPanelHeight,
-      // maxHeight: _maxPanelHeight,
+      minHeight: _minPanelHeight,
+      maxHeight: _maxPanelHeight,
       body: _background(),
-      header: _panelHeader(_panelWidth),
       panelBuilder: (sc) => _panelBody(sc),
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
@@ -53,31 +75,28 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   }
 
   Widget _panelBody(ScrollController sc) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 30),
-      child: Text(""),
-    );
-  }
-
-  Widget _panelHeader(double panelWidth) {
-    return Container(
-      width: panelWidth,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Container(
-              width: 40,
-              height: 7,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(5),
-              ),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: Container(
+            width: 40,
+            height: 7,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(5),
             ),
           ),
-          _textField(),
-        ],
-      ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+          child: SearchBar(
+            textController: searchBarController,
+            hintText: "Patient ID",
+            onSearch: (str) => {},
+          ),
+        ),
+      ],
     );
   }
 
@@ -138,40 +157,6 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _textField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 20,
-      ),
-      child: Row(
-        children: [
-          Flexible(
-            child: TextField(
-              textInputAction: TextInputAction.search,
-              autocorrect: false,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.zero,
-                fillColor: Colors.grey[100],
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide: BorderSide.none,
-                ),
-                hintText: "Patient ID",
-                prefixIcon: Icon(Icons.search),
-              ),
-            ),
-          ),
-          // TextButton(
-          //   onPressed: () => {},
-          //   child: Text("Cancel"),
-          // ),
-        ],
       ),
     );
   }
