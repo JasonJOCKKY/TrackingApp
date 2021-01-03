@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tracking_app/pages/patient-menu-page.dart';
-import 'package:tracking_app/widgets/interactive-map.dart';
+import 'package:tracking_app/widgets/map/interactive-map.dart';
 import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/topbar.dart';
 
@@ -11,16 +12,16 @@ class PatientMapPage extends StatefulWidget {
 
 class _PatientMapPageState extends State<PatientMapPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final InteractiveMapController _mapController = InteractiveMapController();
 
   // Functions for FABs
-  bool isMapCentered = false;
+  // bool isMapCentered = false;
   bool isGridVisible = false;
   bool isTimelineShown = false;
 
-  onCenterToggle() {
-    setState(() {
-      isMapCentered = !isMapCentered;
-    });
+  onCenterPressed() {
+    _mapController.centerTo(
+        currentPosition.latitude, currentPosition.longitude);
   }
 
   onGridToggle() {
@@ -35,7 +36,49 @@ class _PatientMapPageState extends State<PatientMapPage> {
     });
   }
 
+  // Custom Functions
+  Position currentPosition;
+  void onPositionChange(Position newPosition) {
+    setState(() {
+      currentPosition = newPosition;
+    });
+  }
+
   // Override Methods
+  @override
+  void initState() {
+    super.initState();
+
+    // Check Loaction Availability
+    Geolocator.isLocationServiceEnabled().then((serviecEnabled) {
+      if (serviecEnabled) {
+        // Service Enabled
+        Geolocator.checkPermission().then((permission) {
+          if (permission == LocationPermission.always ||
+              permission == LocationPermission.whileInUse) {
+            // Always have permission
+            Geolocator.getPositionStream(
+              desiredAccuracy: LocationAccuracy.best,
+            ).listen(onPositionChange);
+
+            // Initialize the map
+            Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.best)
+                .then((newPosition) {
+              _mapController.centerTo(
+                  newPosition.latitude, newPosition.longitude);
+            });
+          } else {
+            // Does Not Always have permission
+            Geolocator.requestPermission();
+          }
+        });
+      } else {
+        // Service Not Enabled
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,11 +87,11 @@ class _PatientMapPageState extends State<PatientMapPage> {
       drawerEnableOpenDragGesture: false,
       body: Stack(
         children: [
-          // Background
-          InteractiveMap(),
-          // FABs
+          InteractiveMap(
+            controller: _mapController,
+            showCurrentLocation: true,
+          ),
           _fabs(),
-          // Top Bar
           TopBar(),
         ],
       ),
@@ -76,9 +119,9 @@ class _PatientMapPageState extends State<PatientMapPage> {
                 ),
                 // Center Button
                 MapFab(
-                  onPressed: this.onCenterToggle,
+                  onPressed: this.onCenterPressed,
                   icon: Icons.near_me,
-                  isActive: this.isMapCentered,
+                  isActive: false,
                 ),
               ],
             ),

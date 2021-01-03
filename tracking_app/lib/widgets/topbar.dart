@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TopBar extends StatelessWidget {
   @override
@@ -8,6 +9,9 @@ class TopBar extends StatelessWidget {
     MediaQueryData _mq = MediaQuery.of(context);
     double _width = _mq.size.width;
     double _height = _mq.padding.top;
+
+    // Set status bar text color
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     return ClipRRect(
       child: BackdropFilter(
@@ -18,7 +22,7 @@ class TopBar extends StatelessWidget {
         child: Container(
           width: _width,
           height: _height,
-          color: Colors.transparent,
+          color: Colors.white.withOpacity(0),
         ),
       ),
     );
