@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 
 // For Map Keys
 def mapKeysProperties = new Properties()
-def mapKeysPropertiesFile = rootProject.file('map.keys.properties')
+def mapKeysPropertiesFile = rootProject.file('maps.keys.properties')
 if (mapKeysPropertiesFile.exists()) {
     mapKeysPropertiesFile.withReader('UTF-8') { reader ->
         mapKeysProperties.load(reader)
