@@ -20,8 +20,10 @@ class _PatientMapPageState extends State<PatientMapPage> {
   bool isTimelineShown = false;
 
   onCenterPressed() {
-    _mapController.centerTo(
-        currentPosition.latitude, currentPosition.longitude);
+    Geolocator.getCurrentPosition().then((currentPosition) {
+      _mapController.centerTo(
+          currentPosition.latitude, currentPosition.longitude);
+    });
   }
 
   onGridToggle() {
@@ -37,12 +39,6 @@ class _PatientMapPageState extends State<PatientMapPage> {
   }
 
   // Custom Functions
-  Position currentPosition;
-  void onPositionChange(Position newPosition) {
-    setState(() {
-      currentPosition = newPosition;
-    });
-  }
 
   // Override Methods
   @override
@@ -56,11 +52,6 @@ class _PatientMapPageState extends State<PatientMapPage> {
         Geolocator.checkPermission().then((permission) {
           if (permission == LocationPermission.always ||
               permission == LocationPermission.whileInUse) {
-            // Always have permission
-            Geolocator.getPositionStream(
-              desiredAccuracy: LocationAccuracy.best,
-            ).listen(onPositionChange);
-
             // Initialize the map
             Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.best)

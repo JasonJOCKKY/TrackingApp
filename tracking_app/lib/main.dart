@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app/pages/doctor-map-page.dart';
 import 'package:tracking_app/pages/patient-map-page.dart';
+import 'package:tracking_app/pages/patient-permission-page.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.brown,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: PatientMapPage(),
+      home: PatientPermissionPage(),
     );
   }
 }
