@@ -14,6 +14,9 @@ class _PatientMapPageState extends State<PatientMapPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final InteractiveMapController _mapController = InteractiveMapController();
 
+  Stream<Position> positionStream;
+  bool isLoadingPosition = true;
+
   // Functions for FABs
   // bool isMapCentered = false;
   bool isGridVisible = false;
@@ -45,28 +48,12 @@ class _PatientMapPageState extends State<PatientMapPage> {
   void initState() {
     super.initState();
 
-    // Check Loaction Availability
-    Geolocator.isLocationServiceEnabled().then((serviecEnabled) {
-      if (serviecEnabled) {
-        // Service Enabled
-        Geolocator.checkPermission().then((permission) {
-          if (permission == LocationPermission.always ||
-              permission == LocationPermission.whileInUse) {
-            // Initialize the map
-            Geolocator.getCurrentPosition(
-                    desiredAccuracy: LocationAccuracy.best)
-                .then((newPosition) {
-              _mapController.centerTo(
-                  newPosition.latitude, newPosition.longitude);
-            });
-          } else {
-            // Does Not Always have permission
-            Geolocator.requestPermission();
-          }
-        });
-      } else {
-        // Service Not Enabled
-      }
+    Geolocator.getCurrentPosition().then((value) {
+      _mapController.centerTo(value.latitude, value.longitude);
+    });
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((newPosition) {
+      _mapController.centerTo(newPosition.latitude, newPosition.longitude);
     });
   }
 
