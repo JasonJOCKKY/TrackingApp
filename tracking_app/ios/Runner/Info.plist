@@ -22,10 +22,19 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- LocationPermissions -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location data will be sent to our server to generate risk analysis.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your location data will be sent to our server to generate risk analysis.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your realtime location is used to display risk zones around you.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>location</string>
+	</array>
+	<!-- LocationPermissions End -->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

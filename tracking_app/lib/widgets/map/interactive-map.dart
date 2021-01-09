@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class InteractiveMap extends StatefulWidget {
   final InteractiveMapController controller;
+  final Function() onMapDrag;
 
   /// Show a marker for the current position on the map
   final bool showCurrentLocation;
@@ -17,6 +20,7 @@ class InteractiveMap extends StatefulWidget {
     this.showCurrentLocation = false,
     this.showGrid = false,
     this.showTrajectory = false,
+    this.onMapDrag,
   }) : super(key: key);
 
   @override
@@ -34,24 +38,34 @@ class _InteractiveMapState extends State<InteractiveMap> {
     super.initState();
 
     // Set up the controller
+    widget.controller.isReady = false;
     widget.controller.centerTo = centerTo;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: LatLng(0, 0),
-        zoom: 11.0,
-      ),
-      myLocationEnabled: widget.showCurrentLocation,
-      myLocationButtonEnabled: false,
-      rotateGesturesEnabled: false,
-      zoomControlsEnabled: false,
-      mapType: MapType.normal,
-      onMapCreated: (controller) {
-        _googleMapController = controller;
+    return Listener(
+      onPointerMove: (event) {
+        widget.onMapDrag();
       },
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(0, 0),
+          zoom: 11.0,
+        ),
+        myLocationEnabled: widget.showCurrentLocation,
+        myLocationButtonEnabled: false,
+        rotateGesturesEnabled: false,
+        zoomControlsEnabled: false,
+        mapType: MapType.normal,
+        onMapCreated: (controller) {
+          _googleMapController = controller;
+          widget.controller.isReady = true;
+          Geolocator.getCurrentPosition().then((currentPosition) {
+            centerTo(currentPosition.latitude, currentPosition.longitude);
+          });
+        },
+      ),
     );
   }
 
@@ -67,6 +81,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
 
 class InteractiveMapController {
   // Public Methods
+  bool isReady = false;
 
   /// Center the camera to a specified location
   Function(double latitude, double longitude) centerTo;

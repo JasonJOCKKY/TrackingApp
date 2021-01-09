@@ -6,6 +6,10 @@ import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/topbar.dart';
 
 class PatientMapPage extends StatefulWidget {
+  // final Position initialLocation;
+
+  // const PatientMapPage({Key key, this.initialLocation}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _PatientMapPageState();
 }
@@ -15,17 +19,22 @@ class _PatientMapPageState extends State<PatientMapPage> {
   final InteractiveMapController _mapController = InteractiveMapController();
 
   Stream<Position> positionStream;
-  bool isLoadingPosition = true;
+
+  // Keeps track of the last known location
+  Position currentPosition;
 
   // Functions for FABs
-  // bool isMapCentered = false;
+  bool isMapCentered = true;
   bool isGridVisible = false;
   bool isTimelineShown = false;
 
   onCenterPressed() {
-    Geolocator.getCurrentPosition().then((currentPosition) {
-      _mapController.centerTo(
-          currentPosition.latitude, currentPosition.longitude);
+    setState(() {
+      isMapCentered = true;
+      if (currentPosition != null) {
+        _mapController.centerTo(
+            currentPosition.latitude, currentPosition.longitude);
+      }
     });
   }
 
@@ -48,12 +57,12 @@ class _PatientMapPageState extends State<PatientMapPage> {
   void initState() {
     super.initState();
 
-    Geolocator.getCurrentPosition().then((value) {
-      _mapController.centerTo(value.latitude, value.longitude);
-    });
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((newPosition) {
-      _mapController.centerTo(newPosition.latitude, newPosition.longitude);
+    positionStream = Geolocator.getPositionStream();
+    positionStream.listen((newPosition) {
+      currentPosition = newPosition;
+      if (isMapCentered && _mapController.isReady) {
+        _mapController.centerTo(newPosition.latitude, newPosition.longitude);
+      }
     });
   }
 
@@ -68,6 +77,11 @@ class _PatientMapPageState extends State<PatientMapPage> {
           InteractiveMap(
             controller: _mapController,
             showCurrentLocation: true,
+            onMapDrag: () {
+              setState(() {
+                isMapCentered = false;
+              });
+            },
           ),
           _fabs(),
           TopBar(),
@@ -99,7 +113,7 @@ class _PatientMapPageState extends State<PatientMapPage> {
                 MapFab(
                   onPressed: this.onCenterPressed,
                   icon: Icons.near_me,
-                  isActive: false,
+                  isActive: this.isMapCentered,
                 ),
               ],
             ),

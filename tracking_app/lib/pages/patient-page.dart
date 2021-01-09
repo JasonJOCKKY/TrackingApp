@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,14 +11,13 @@ class PatientPage extends StatefulWidget {
   _PatientPageState createState() => _PatientPageState();
 }
 
-class _PatientPageState extends State<PatientPage> {
+class _PatientPageState extends State<PatientPage> with WidgetsBindingObserver {
   bool isLoadingStatus = true;
-  bool isLoadingPosition = true;
+  bool isLoadingPosition = false;
 
   bool isServiceEnabled = false;
   bool isPermissionGranted = false;
 
-  Timer timer;
   Stream<Position> positionStream;
 
   // Location Methods
@@ -26,32 +26,23 @@ class _PatientPageState extends State<PatientPage> {
   }
 
   void requestPermission() {
-    Geolocator.requestPermission().then((result) {
-      setState(() {
-        isPermissionGranted = result == LocationPermission.always;
-      });
+    Geolocator.requestPermission().then((permission) {
+      if (permission != LocationPermission.always) {
+        Geolocator.openAppSettings();
+      }
     });
   }
 
   Future<bool> checkLocationStatus() async {
+    isLoadingStatus = true;
     isServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    isPermissionGranted =
-        await Geolocator.checkPermission() == LocationPermission.always;
+    final permission = await Geolocator.checkPermission();
+    isPermissionGranted = permission == LocationPermission.always;
+    isLoadingStatus = false;
+
+    log("permission = " + permission.toString());
 
     return isServiceEnabled && isPermissionGranted;
-  }
-
-  Timer startStatusTimer() {
-    return Timer.periodic(Duration(seconds: 1), (tmr) {
-      checkLocationStatus().then((enabled) {
-        if (enabled) {
-          timer.cancel();
-          if (positionStream == null) {
-            positionStream = Geolocator.getPositionStream();
-          }
-        }
-      });
-    });
   }
 
   // Override Methods
@@ -59,15 +50,30 @@ class _PatientPageState extends State<PatientPage> {
   void initState() {
     super.initState();
 
-    isLoadingStatus = true;
-    checkLocationStatus().then((isEnabled) {
-      isLoadingStatus = false;
-      if (isEnabled) {
-        positionStream = Geolocator.getPositionStream();
-      } else {
-        timer = startStatusTimer();
-      }
+    checkLocationStatus().then((value) {
+      setState(() {});
     });
+
+    // For observing app's lifecycle
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    // When app is resumed
+    if (state == AppLifecycleState.resumed) {
+      checkLocationStatus().then((value) {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -83,8 +89,10 @@ class _PatientPageState extends State<PatientPage> {
     return isServiceEnabled && isPermissionGranted
         ? PatientMapPage()
         : PatientPermissionPage(
-            initialServiceENabled: isServiceEnabled,
-            initialPermissionGranted: isPermissionGranted,
+            isServiceEnabled: isServiceEnabled,
+            isPermissionGranted: isPermissionGranted,
+            openLoactionSetting: openServiceSetting,
+            requestPermission: requestPermission,
           );
   }
 }
