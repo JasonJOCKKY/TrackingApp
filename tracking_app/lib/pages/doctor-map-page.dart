@@ -15,6 +15,7 @@ class DoctorMapPage extends StatefulWidget {
 
 class _DoctorMapPageState extends State<DoctorMapPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final InteractiveMapController _mapController = InteractiveMapController();
 
   // Functions for Panel
   final double _defaultPanelHeight = 100;
@@ -59,7 +60,6 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   // Widget builder functions
   Widget _panel(context) {
     MediaQueryData _mq = MediaQuery.of(context);
-
     _minPanelHeight = _defaultPanelHeight + _mq.padding.bottom;
     _maxPanelHeight = _mq.size.height - _mq.padding.top - _mq.viewInsets.bottom;
 
@@ -104,7 +104,9 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   Widget _background() {
     return Stack(
       children: [
-        InteractiveMap(),
+        InteractiveMap(
+          controller: _mapController,
+        ),
         // FABs
         _fabs(),
         // TopBar

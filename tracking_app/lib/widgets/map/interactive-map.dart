@@ -1,7 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class DefaultCameras {
+  static final USA = CameraPosition(
+    target: LatLng(37.9643, -91.8318),
+    zoom: 6,
+  );
+}
 
 class InteractiveMap extends StatefulWidget {
   final InteractiveMapController controller;
@@ -16,7 +26,7 @@ class InteractiveMap extends StatefulWidget {
 
   const InteractiveMap({
     Key key,
-    this.controller,
+    @required this.controller,
     this.showCurrentLocation = false,
     this.showGrid = false,
     this.showTrajectory = false,
@@ -46,13 +56,14 @@ class _InteractiveMapState extends State<InteractiveMap> {
   Widget build(BuildContext context) {
     return Listener(
       onPointerMove: (event) {
-        widget.onMapDrag();
+        if (widget.onMapDrag != null) {
+          widget.onMapDrag();
+        }
       },
       child: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(0, 0),
-          zoom: 11.0,
-        ),
+        gestureRecognizers: Set()
+          ..add(Factory<PanGestureRecognizer>(() => PanGestureRecognizer())),
+        initialCameraPosition: DefaultCameras.USA,
         myLocationEnabled: widget.showCurrentLocation,
         myLocationButtonEnabled: false,
         rotateGesturesEnabled: false,
@@ -61,9 +72,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
         onMapCreated: (controller) {
           _googleMapController = controller;
           widget.controller.isReady = true;
-          Geolocator.getCurrentPosition().then((currentPosition) {
-            centerTo(currentPosition.latitude, currentPosition.longitude);
-          });
         },
       ),
     );

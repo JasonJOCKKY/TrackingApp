@@ -6,10 +6,6 @@ import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/topbar.dart';
 
 class PatientMapPage extends StatefulWidget {
-  // final Position initialLocation;
-
-  // const PatientMapPage({Key key, this.initialLocation}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() => _PatientMapPageState();
 }

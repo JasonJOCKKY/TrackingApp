@@ -5,7 +5,7 @@ class SearchBar extends StatefulWidget {
   final Function(String str) onSearch;
   final String hintText;
 
-  SearchBar({this.textController, this.onSearch, this.hintText});
+  SearchBar({@required this.textController, this.onSearch, this.hintText});
 
   @override
   State<StatefulWidget> createState() => _SearchBarState();
@@ -40,7 +40,11 @@ class _SearchBarState extends State<SearchBar> {
               suffixIcon: Visibility(
                 visible: widget.textController.text.isNotEmpty,
                 child: IconButton(
-                  onPressed: () => widget.textController.clear(),
+                  onPressed: () {
+                    setState(() {
+                      widget.textController.clear();
+                    });
+                  },
                   icon: Icon(
                     Icons.cancel,
                   ),
@@ -54,26 +58,30 @@ class _SearchBarState extends State<SearchBar> {
           ),
         ),
         Visibility(
-            visible: _focus.hasFocus,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 10,
-              ),
-              child: InkWell(
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColorDark,
-                  ),
+          visible: _focus.hasFocus,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+            ),
+            child: InkWell(
+              // Cencel
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Theme.of(context).primaryColorDark,
                 ),
-                onTap: () {
+              ),
+              onTap: () {
+                setState(() {
                   if (_focus.hasFocus) {
                     _focus.unfocus();
                   }
                   widget.textController.text = _currentValue;
-                },
-              ),
-            )),
+                });
+              },
+            ),
+          ),
+        ),
       ],
     );
   }

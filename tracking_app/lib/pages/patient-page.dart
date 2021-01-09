@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -39,8 +38,6 @@ class _PatientPageState extends State<PatientPage> with WidgetsBindingObserver {
     final permission = await Geolocator.checkPermission();
     isPermissionGranted = permission == LocationPermission.always;
     isLoadingStatus = false;
-
-    log("permission = " + permission.toString());
 
     return isServiceEnabled && isPermissionGranted;
   }
