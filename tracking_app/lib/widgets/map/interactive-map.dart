@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DefaultCameras {
+  // ignore: non_constant_identifier_names
   static final USA = CameraPosition(
     target: LatLng(37.9643, -91.8318),
     zoom: 6,

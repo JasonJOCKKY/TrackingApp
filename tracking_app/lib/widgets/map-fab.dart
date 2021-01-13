@@ -21,6 +21,7 @@ class MapFab extends StatelessWidget {
       backgroundColor: isActive ? color2 : color1,
       foregroundColor: isActive ? color1 : color2,
       mini: this.mini,
+      heroTag: null,
     );
   }
 }
