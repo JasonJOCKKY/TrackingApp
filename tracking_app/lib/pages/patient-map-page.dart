@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:tracking_app/pages/patient-menu-page.dart';
+import 'package:tracking_app/widgets/patient-menu-drawer.dart';
 import 'package:tracking_app/widgets/map/interactive-map.dart';
 import 'package:tracking_app/widgets/map-fab.dart';
-import 'package:tracking_app/widgets/topbar.dart';
+import 'package:tracking_app/widgets/top-bar.dart';
 
 class PatientMapPage extends StatefulWidget {
   @override
@@ -14,35 +14,35 @@ class _PatientMapPageState extends State<PatientMapPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final InteractiveMapController _mapController = InteractiveMapController();
 
-  Stream<Position> positionStream;
+  Stream<Position> _positionStream;
 
   // Keeps track of the last known location
-  Position currentPosition;
+  Position _currentPosition;
 
   // Functions for FABs
-  bool isMapCentered = true;
-  bool isGridVisible = false;
-  bool isTimelineShown = false;
+  bool _isMapCentered = true;
+  bool _isGridVisible = false;
+  bool _isTimelineShown = false;
 
   onCenterPressed() {
     setState(() {
-      isMapCentered = true;
-      if (currentPosition != null) {
+      _isMapCentered = true;
+      if (_currentPosition != null) {
         _mapController.centerTo(
-            currentPosition.latitude, currentPosition.longitude);
+            _currentPosition.latitude, _currentPosition.longitude);
       }
     });
   }
 
   onGridToggle() {
     setState(() {
-      isGridVisible = !isGridVisible;
+      _isGridVisible = !_isGridVisible;
     });
   }
 
   onTimelineTogger() {
     setState(() {
-      isTimelineShown = !isTimelineShown;
+      _isTimelineShown = !_isTimelineShown;
     });
   }
 
@@ -53,10 +53,10 @@ class _PatientMapPageState extends State<PatientMapPage> {
   void initState() {
     super.initState();
 
-    positionStream = Geolocator.getPositionStream();
-    positionStream.listen((newPosition) {
-      currentPosition = newPosition;
-      if (isMapCentered && _mapController.isReady) {
+    _positionStream = Geolocator.getPositionStream();
+    _positionStream.listen((newPosition) {
+      _currentPosition = newPosition;
+      if (_isMapCentered && _mapController.isReady) {
         _mapController.centerTo(newPosition.latitude, newPosition.longitude);
       }
     });
@@ -66,7 +66,7 @@ class _PatientMapPageState extends State<PatientMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: this._scaffoldKey,
-      drawer: PatientMenuPage(),
+      drawer: PatientMenuDrawer(),
       drawerEnableOpenDragGesture: false,
       body: Stack(
         children: [
@@ -75,7 +75,7 @@ class _PatientMapPageState extends State<PatientMapPage> {
             showCurrentLocation: true,
             onMapDrag: () {
               setState(() {
-                isMapCentered = false;
+                _isMapCentered = false;
               });
             },
           ),
@@ -109,7 +109,7 @@ class _PatientMapPageState extends State<PatientMapPage> {
                 MapFab(
                   onPressed: this.onCenterPressed,
                   icon: Icons.near_me,
-                  isActive: this.isMapCentered,
+                  isActive: this._isMapCentered,
                 ),
               ],
             ),
@@ -119,13 +119,13 @@ class _PatientMapPageState extends State<PatientMapPage> {
                 MapFab(
                     onPressed: this.onGridToggle,
                     icon: Icons.visibility,
-                    isActive: this.isGridVisible),
+                    isActive: this._isGridVisible),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: MapFab(
                     onPressed: this.onTimelineTogger,
                     icon: Icons.timeline,
-                    isActive: this.isTimelineShown,
+                    isActive: this._isTimelineShown,
                     mini: true,
                   ),
                 ),

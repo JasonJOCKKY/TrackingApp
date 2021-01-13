@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:tracking_app/pages/patient-menu-page.dart';
+import 'package:tracking_app/widgets/patient-menu-drawer.dart';
 import 'package:tracking_app/widgets/map/interactive-map.dart';
 import 'package:tracking_app/widgets/map-fab.dart';
 import 'package:tracking_app/widgets/searchbar.dart';
-import 'package:tracking_app/widgets/topbar.dart';
+import 'package:tracking_app/widgets/top-bar.dart';
 
 class DoctorMapPage extends StatefulWidget {
   @override
@@ -23,15 +23,14 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   double _maxPanelHeight;
 
   // Functions for search bar
-  bool isTyping = false;
-  final TextEditingController searchBarController = TextEditingController();
+  final TextEditingController _searchBarController = TextEditingController();
 
   // Functions for FABs
-  bool isGridVisible = false;
+  bool _isGridVisible = false;
 
   onGridToggle() {
     setState(() {
-      isGridVisible = !isGridVisible;
+      _isGridVisible = !_isGridVisible;
     });
   }
 
@@ -43,7 +42,7 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
 
   @override
   void dispose() {
-    searchBarController.dispose();
+    _searchBarController.dispose();
     super.dispose();
   }
 
@@ -51,7 +50,7 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: this._scaffoldKey,
-      drawer: PatientMenuPage(),
+      drawer: PatientMenuDrawer(),
       drawerEnableOpenDragGesture: false,
       body: _panel(context),
     );
@@ -92,7 +91,7 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
         Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
           child: SearchBar(
-            textController: searchBarController,
+            textController: _searchBarController,
             hintText: "Patient ID",
             onSearch: (str) => {},
           ),
@@ -145,7 +144,7 @@ class _DoctorMapPageState extends State<DoctorMapPage> {
                 MapFab(
                   onPressed: this.onGridToggle,
                   icon: Icons.visibility,
-                  isActive: this.isGridVisible,
+                  isActive: this._isGridVisible,
                 ),
               ],
             ),
